@@ -31,6 +31,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("write", "read")
                 .accessTokenValiditySeconds(60 * 60 * 6)
+                .refreshTokenValiditySeconds(60 * 60 * 12)
             .and()
                 .withClient("refresh-token")
                 .secret(passwordEncoder.encode("web123"));
@@ -46,6 +47,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService);
+                .userDetailsService(userDetailsService)
+                .reuseRefreshTokens(false);
     }
 }
+// http://localhost:8081/oauth/authorize?response_type=code&client_id=algafood-faturamento&state=abc&redirect_uri=http://localhost:8080
+// http://localhost:8081/oauth/authorize?response_type=token&client_id=algafood-admin&state=abc&redirect_uri=http://localhost:8080
