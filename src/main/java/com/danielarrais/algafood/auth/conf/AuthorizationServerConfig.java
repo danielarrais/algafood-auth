@@ -2,8 +2,8 @@ package com.danielarrais.algafood.auth.conf;
 
 import com.danielarrais.algafood.auth.conf.pkce.PkceAuthorizationCodeTokenGranter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,8 +14,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import java.util.Arrays;
 
@@ -31,9 +30,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
-
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
@@ -43,23 +39,23 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .scopes("write", "read")
                 .accessTokenValiditySeconds(60 * 60 * 6)
                 .refreshTokenValiditySeconds(60 * 60 * 12)
-            .and()
+                .and()
                 .withClient("algafood-faturamento")
                 .secret(passwordEncoder.encode("web123"))
                 .authorizedGrantTypes("authorization_code")
                 .redirectUris("http://localhost:8080")
                 .scopes("write", "read")
-            .and()
+                .and()
                 .withClient("algafood-admin")
                 .redirectUris("http://localhost:8080")
                 .authorizedGrantTypes("implicit")
                 .scopes("write", "read")
-            .and()
+                .and()
                 .withClient("algafood-analitics")
                 .secret(passwordEncoder.encode("web123"))
                 .authorizedGrantTypes("client_credentials")
                 .scopes("read")
-            .and()
+                .and()
                 .withClient("refresh-token")
                 .secret(passwordEncoder.encode("web123"));
 
@@ -67,21 +63,25 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) {
-        security.checkTokenAccess("isAuthenticated");
+        security.checkTokenAccess("permitAll()");
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
-                .tokenStore(tokenStoreRedis())
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
                 .reuseRefreshTokens(false)
-        .tokenGranter(tokenGranter(endpoints));
+                .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenGranter(tokenGranter(endpoints));
     }
 
-    private TokenStore tokenStoreRedis() {
-        return new RedisTokenStore(redisConnectionFactory);
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey("algafood");
+
+        return jwtAccessTokenConverter;
     }
 
     private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
