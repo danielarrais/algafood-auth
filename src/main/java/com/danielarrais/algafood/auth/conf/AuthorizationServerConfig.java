@@ -84,5 +84,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         return new CompositeTokenGranter(granters);
     }
 }
-// http://localhost:8081/oauth/authorize?response_type=code&client_id=algafood-faturamento&state=abc&redirect_uri=http://localhost:8080
-// http://localhost:8081/oauth/authorize?response_type=token&client_id=algafood-admin&state=abc&redirect_uri=http://localhost:8080
+
+/*
+Samples:
+ Code verify sample: BWMNeSVjI90plZvQdxqFHUe_JbGHIaV4u6Wn4XFRJTU
+ Code challenge sample: BWMNeSVjI90plZvQdxqFHUe_JbGHIaV4u6Wn4XFRJTU
+ Code challenge s256 sample: Yq87qM2TQ2bdjRN6.twYJIPVKjW_Blu-GKMUJPe_xl4tafvy1ubpQMU~q~Pjb8Xc7MOhafK2i-0RU7Ja~uThma9U~bPMw8XC.guZMua56SBcrxsu4fAezsHqyz4FPxxQ
+
+ http://localhost:8081/oauth/authorize?response_type=code&client_id=algafood-faturamento&state=abc&redirect_uri=http://localhost:8080&code_challenge=BWMNeSVjI90plZvQdxqFHUe_JbGHIaV4u6Wn4XFRJTU&code_challenge_method=s256
+ http://localhost:8081/oauth/authorize?response_type=code&client_id=algafood-faturamento&state=abc&redirect_uri=http://localhost:8080&code_challenge=BWMNeSVjI90plZvQdxqFHUe_JbGHIaV4u6Wn4XFRJTU&code_challenge_method=plain
+ http://localhost:8081/oauth/authorize?response_type=code&client_id=algafood-faturamento&state=abc&redirect_uri=http://localhost:8080
+ http://localhost:8081/oauth/authorize?response_type=token&client_id=algafood-admin&state=abc&redirect_uri=http://localhost:8080
+ */
