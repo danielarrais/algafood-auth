@@ -1,7 +1,7 @@
 package com.danielarrais.algafood.auth.conf;
 
 import com.danielarrais.algafood.auth.conf.pkce.PkceAuthorizationCodeTokenGranter;
-import org.springframework.beans.factory.annotation.Value;
+import com.danielarrais.algafood.auth.conf.properties.KeyStoreProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -24,18 +24,15 @@ import java.util.Arrays;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     private final AuthenticationManager authenticationManager;
-
     private final UserDetailsService userDetailsService;
-
     private final PasswordEncoder passwordEncoder;
+    private final KeyStoreProperties keyStoreProperties;
 
-    @Value("${algafood.security.jwt-secret-key}")
-    private String secretJwtKey;
-
-    public AuthorizationServerConfig(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AuthorizationServerConfig(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, KeyStoreProperties keyStoreProperties) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.keyStoreProperties = keyStoreProperties;
     }
 
     @Override
@@ -87,11 +84,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setSigningKey(secretJwtKey);
 
-        var jksResource = new ClassPathResource("keystores/algafood.jks");
-        var keyStorePass = "algafood";
-        var keyPairAlias = "algafood";
+        var jksResource = new ClassPathResource(keyStoreProperties.getFileUrl());
+        var keyStorePass = keyStoreProperties.getStorePass();
+        var keyPairAlias = keyStoreProperties.getPairAlias();
 
         var keyStoreKeyFactory = new KeyStoreKeyFactory(jksResource, keyStorePass.toCharArray());
         var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
