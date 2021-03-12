@@ -1,4 +1,4 @@
-package com.danielarrais.algafood.auth.conf.properties;
+package com.danielarrais.algafood.auth.core.conf.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

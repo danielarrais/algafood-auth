@@ -1,4 +1,4 @@
-package com.danielarrais.algafood.auth.conf.pkce;
+package com.danielarrais.algafood.auth.core.conf.pkce;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.security.crypto.codec.Utf8;

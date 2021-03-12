@@ -1,7 +1,7 @@
-package com.danielarrais.algafood.auth.conf;
+package com.danielarrais.algafood.auth.core.conf;
 
-import com.danielarrais.algafood.auth.conf.pkce.PkceAuthorizationCodeTokenGranter;
-import com.danielarrais.algafood.auth.conf.properties.KeyStoreProperties;
+import com.danielarrais.algafood.auth.core.conf.pkce.PkceAuthorizationCodeTokenGranter;
+import com.danielarrais.algafood.auth.core.conf.properties.KeyStoreProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
